@@ -1,13 +1,15 @@
 
 "use client"
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import '../styles/index.css'
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+
+import '@/styles/index.css'
 import { ITask } from '@/utils/types';
+import * as API from '@/utils/api';
 
 export default function Home() {
-  const [tasks, setTasks] = useState<ITask[]>([{ id: "1", title:"tasks1", completed: false}]);
+  const [tasks, setTasks] = useState<ITask[]>([]);
   const router = useRouter()
 
   const { totalTaskCount } = useMemo(() => {
@@ -25,6 +27,47 @@ export default function Home() {
   const handleViewTask = (task: ITask) => {
     router.push(`/${task.id}`)
   }
+
+  const fetchData = () => {
+    API.getTasks()
+    .then(res => res.json())
+    .then((data: ITask[]) => {
+      setTasks(data);
+    })
+    .catch(err => {
+      console.error("Failed to read tasks. ", err)
+    })
+  }
+
+  const handleDeleteTask = (event: MouseEvent<HTMLButtonElement>, taskId: string) => {    
+    event.stopPropagation();
+
+    API.deleteTaskById(taskId)
+        .then(res => res.json())
+        .then(() => {
+          fetchData();
+        })
+        .catch(err => {
+            console.error("Failed to delete a task data. ", err);
+        })
+  }
+
+  const handleChangeTaskStatus = (event: MouseEvent<HTMLDivElement>, taskId: string, completed: boolean) => {
+    event.stopPropagation();
+
+    API.updateTaskStatus(taskId, completed)
+        .then(res => res.json())
+        .then(() => {
+          fetchData();
+        })
+        .catch(err => {
+            console.error("Failed to update a task's status. ", err);
+        })
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col w-full mt-[-27px]">
@@ -50,16 +93,26 @@ export default function Home() {
         {tasks.length > 0 ? (
           <div className='flex flex-col gap-3'>
             {tasks.map((task, idx) => {
-              const { title } = task;
+              const { title, completed, id: taskId } = task;
+              console.log("completed: ", typeof completed, completed)
               return (
                 <div
                   key={`task-item-${idx}`}
                   className='flex items-center gap-3 p-4 border rounded-lg border-gray-400 cursor-pointer hover:border-primary'
                   onClick={() => handleViewTask(task)}
                 >
-                  <input type="checkbox" className='checkbox'/>
-                  <span className='text-sm text-gray-100 flex-1'>{title}</span>
-                  <button className='hover:border-primary hover:border border border-transparent rounded'><Image alt="Delete Task" src={"trash.svg"} width={24} height={24} /></button>
+                  <div 
+                    className='flex items-center'
+                    onClick={e => handleChangeTaskStatus(e, taskId, !completed)}
+                  >
+                    {completed ? (
+                      <Image alt="Task Completed" src={"checkbox-checked.svg"} width={24} height={24} />
+                    ) : (
+                      <Image alt="Task Incompleted" src={"checkbox-unchecked.svg"} width={24} height={24} />
+                    )}
+                  </div>
+                  {completed ? (<span className='text-sm text-gray-100 flex-1'>{title}</span>) : (<span className='text-sm text-gray-300 flex-1 line-through'>{title}</span>)}
+                  <button onClick={(e) => handleDeleteTask(e, task.id)} className='hover:border-primary hover:border border border-transparent rounded'><Image alt="Delete Task" src={"trash.svg"} width={24} height={24} /></button>
                 </div>
               )
             })}

@@ -1,3 +1,5 @@
+export const API_URL = process.env.API_URL;
+
 export const TASK_COLORS = [
     "#FF3B30",
     "#FF9500",

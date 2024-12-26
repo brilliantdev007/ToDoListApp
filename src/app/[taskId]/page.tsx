@@ -1,10 +1,14 @@
-"use client"
+'use client'
+
+import { useParams } from 'next/navigation'
+
 import EditTask from '@/components/EditTask';
-import { useRouter } from 'next/navigation';
 
 export default function UpdateTask() {
+    const params = useParams();
+    const taskId = params.taskId
 
     return (
-        <EditTask />
+        <EditTask taskId={taskId as string} />
     );
 }
