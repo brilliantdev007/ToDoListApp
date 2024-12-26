@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@nextui-org/checkbox": "^2.3.7",
-    "@nextui-org/react": "^2.6.10",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

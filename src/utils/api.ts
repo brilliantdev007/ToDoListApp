@@ -1,11 +1,11 @@
 import { API_URL } from "./constants"
 import { ITaskCreateRequest, ITaskUpdateRequest } from "./types";
 
-export const getTasks = () => fetch(`${API_URL}/task/all`);
-export const getTaskById = (id: string) => fetch(`${API_URL}/task/${id}`);
+export const getTasks = () => fetch(`${API_URL}/tasks`);
+export const getTaskById = (id: string) => fetch(`${API_URL}/tasks/${id}`);
 export const updateTask = (id: string, task: ITaskUpdateRequest) => 
         fetch(
-            `${API_URL}/task/${id}`, 
+            `${API_URL}/tasks/${id}`, 
             { 
                 method: "PUT", 
                 headers: {
@@ -15,7 +15,7 @@ export const updateTask = (id: string, task: ITaskUpdateRequest) =>
             });
 export const updateTaskStatus = (id: string, completed: boolean) => 
     fetch(
-        `${API_URL}/task/${id}/status`, 
+        `${API_URL}/tasks/${id}/status`, 
         { 
             method: "PUT", 
             headers: {
@@ -26,7 +26,7 @@ export const updateTaskStatus = (id: string, completed: boolean) =>
 
 export const createTask = (task: ITaskCreateRequest) => 
     fetch(
-        `${API_URL}/task`, 
+        `${API_URL}/tasks`, 
         { 
             method: "POST", 
             headers: {
@@ -36,7 +36,7 @@ export const createTask = (task: ITaskCreateRequest) =>
         });
 export const deleteTaskById = (id: string) => 
     fetch(
-        `${API_URL}/task/${id}`, 
+        `${API_URL}/tasks/${id}`, 
         { 
             method: "DELETE", 
             headers: {

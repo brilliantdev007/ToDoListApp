@@ -12,11 +12,13 @@ export default function Home() {
   const [tasks, setTasks] = useState<ITask[]>([]);
   const router = useRouter()
 
-  const { totalTaskCount } = useMemo(() => {
+  const { totalTaskCount, completedTaskCount } = useMemo(() => {
     const totalTaskCount = tasks.length;
+    const completedTaskCount = tasks.filter(t => t.completed).length;
 
     return {
-      totalTaskCount
+      totalTaskCount,
+      completedTaskCount
     }
   }, [tasks]);
 
@@ -86,7 +88,7 @@ export default function Home() {
           <div className='flex items-center gap-2'>
             <span className='text-sm text-secondary font-bold leading-4'>Completed</span>
             <div className='flex items-center justify-center px-2 py-0.5 rounded-full bg-gray-400'>
-              <span className='text-xs font-bold text-gray-200'>{totalTaskCount}</span>
+              <span className='text-xs font-bold text-gray-200'>{totalTaskCount > 0 ? `${completedTaskCount} / ${totalTaskCount}` : 0}</span>
             </div>
           </div>
         </div>
@@ -111,7 +113,7 @@ export default function Home() {
                       <Image alt="Task Incompleted" src={"checkbox-unchecked.svg"} width={24} height={24} />
                     )}
                   </div>
-                  {completed ? (<span className='text-sm text-gray-100 flex-1'>{title}</span>) : (<span className='text-sm text-gray-300 flex-1 line-through'>{title}</span>)}
+                  {!completed ? (<span className='text-sm text-gray-100 flex-1'>{title}</span>) : (<span className='text-sm text-gray-300 flex-1 line-through'>{title}</span>)}
                   <button onClick={(e) => handleDeleteTask(e, task.id)} className='hover:border-primary hover:border border border-transparent rounded'><Image alt="Delete Task" src={"trash.svg"} width={24} height={24} /></button>
                 </div>
               )
